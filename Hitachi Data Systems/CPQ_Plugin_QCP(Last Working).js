@@ -6,8 +6,6 @@ export function onInit(lines, conn) {
 	return Promise.resolve();
 };
 
-var dateCondition = '';
-
 export function onBeforePriceRules(quote, lines, conn) {
 	var allLines = lines;
 	//Null lines check
@@ -16,7 +14,7 @@ export function onBeforePriceRules(quote, lines, conn) {
 	var quoteId = lines[0].record['SBQQ__Quote__c'];
 	var objQuote;
 	//Query SBQQ__Quote__c
-	var query = "SELECT Id,Partner_Level__c,Price_Date__c,Renewal_Contract_Package__r.Do_Not_Apply_Customer_Partner_Discount__c , Partner_Service_Capability__c,Account_Class__c,Geo__c,Region__c, District__c, Install_At_Country__c,SBQQ__BillingCountry__c,Bill_To_Account__c,Bill_To_Account__r.SiteNumber__c,End_User_Category__c FROM SBQQ__Quote__c WHERE Id ='" + quoteId + "' LIMIT 1";
+	var query = "SELECT Id,Partner_Level__c,Renewal_Contract_Package__r.Do_Not_Apply_Customer_Partner_Discount__c , Partner_Service_Capability__c,Account_Class__c,Geo__c,Region__c, District__c, Install_At_Country__c,SBQQ__BillingCountry__c,Bill_To_Account__c,Bill_To_Account__r.SiteNumber__c,End_User_Category__c FROM SBQQ__Quote__c WHERE Id ='" + quoteId + "' LIMIT 1";
 	console.log(query);
 	/*
 	 * conn.query() returns a Promise that resolves when the query completes.
@@ -27,9 +25,6 @@ export function onBeforePriceRules(quote, lines, conn) {
 		if (results.totalSize) {
 			//logResultSize(lines,'None','Quote Lines recieved');
 		  objQuote = results.records[0];
-		  if(objQuote.Price_Date__c!=null){
-			dateCondition = '(	Date_From__c <=  ' + objQuote.Price_Date__c + ' AND Date_To__c >='+ objQuote.Price_Date__c +' )'
-		  }
 		  //Calling RAF Discount Function
 		  initRAFDiscountRule1(lines, conn, objQuote,lines);
 		  
@@ -155,12 +150,7 @@ function initRAFDiscountRule1(lines,conn, objQuote, allLines){
 		
 		andConditions = andConditions +' (Product__c IN ' + productPcodeList + ')';
 	}
-	if(dateCondition){
-		if(andConditions){
-			andConditions+=' AND ';
-		}
-		andConditions += dateCondition;
-    }
+	
 	if(andConditions)
 		rafSelectQuery = rafSelectQuery + whereClause + andConditions;
 	console.log('RAF discount rule 1:' + rafSelectQuery);
@@ -277,12 +267,7 @@ function initRAFDiscountRule2(lines,conn, objQuote,allLines){
 		
 		andConditions = andConditions + ' (Pricing_Category__c IN ' + productCategoryList + ')';
 	}
-	if(dateCondition){
-		if(andConditions){
-			andConditions+=' AND ';
-		}
-		andConditions += dateCondition;
-    }
+	
 	if(andConditions)
 		rafSelectQuery = rafSelectQuery + whereClause + andConditions;
 	
@@ -393,12 +378,7 @@ function initRAFDiscountRule3(lines,conn, objQuote,allLines){
 		
 		andConditions = andConditions + ' (Service_Sub_Type__c IN ' + productServiceTypeList + ')';
 	}
-	if(dateCondition){
-		if(andConditions){
-			andConditions+=' AND ';
-		}
-		andConditions += dateCondition;
-    }
+	
 	if(andConditions)
 		rafSelectQuery = rafSelectQuery + whereClause + andConditions;
 	
@@ -492,12 +472,6 @@ function initCustomerDiscountRule1(lines, conn, objQuote) {
 	}
 	orConditions = '  (' + orConditions + ')';
   }
-  if(dateCondition){
-	if(orConditions){
-		orConditions+=' AND ';
-	}
-	orConditions += dateCondition;
-  }
   var query = customerSelectQuery;
   if (orConditions) {
 	query = query + whereClause + orConditions;
@@ -582,12 +556,7 @@ function initCustomerDiscountRule2(lines, conn, objQuote) {
 	}
 
   }
-  if(dateCondition){
-	if(conditions){
-		conditions+=' AND ';
-	}
-	conditions += dateCondition;
-  }
+  
   //Creating Query
   var query = customerSelectQuery;
   if (conditions) {
@@ -727,20 +696,11 @@ function initCustomerDiscountRule3(lines, conn, objQuote) {
 	orConditions = '  (' + orConditions + ')';
 
   }
-  if(dateCondition){
-	if(orConditions){
-		orConditions+=' AND ';
-	}
-	orConditions += dateCondition;
-  }
+  
   //Creating Query
   var query = customerSelectQuery + whereClause + orConditions;
   if (endUserCategory) {
-	  if(orConditions){
-		query += " AND End_User_Category__c = '" + endUserCategory + "'";
-	  }else{
-		query += " End_User_Category__c = '" + endUserCategory + "'";  
-	  }
+	query += " AND End_User_Category__c = '" + endUserCategory + "'";
   }
   if (installAtCountry) {
 	  if (endUserCategory || orConditions) {
@@ -899,13 +859,8 @@ function initCustomerDiscountRule4(lines, conn, objQuote) {
 	}
 	orConditions = '  (' + orConditions + ')';
   }
-  if(dateCondition){
-	if(orConditions){
-		orConditions+=' AND ';
-	}
-	orConditions += dateCondition;
-  }
-	
+
+
   var query = customerSelectQuery + whereClause + orConditions;
   var mapCustomerDiscount4Geo = {};
   var mapCustomerDiscount4Country = {};
@@ -1084,12 +1039,7 @@ function initPartnerDiscountRule1(lines, conn, objQuote) {
 	}
 	orConditions = '  (' + orConditions + ')';
   }
-  if(dateCondition){
-	if(orConditions){
-		orConditions+=' AND ';
-	}
-	orConditions += dateCondition;
-  }
+  
   //Creating Query
   var query = customerSelectQuery;
   if (orConditions) {
@@ -1332,12 +1282,7 @@ function initPartnerDiscountRule3(lines, conn, objQuote) {
 	orConditions = '  (' + orConditions + ')';
 
   }
-  if(dateCondition){
-	if(orConditions){
-		orConditions+=' AND ';
-	}
-	orConditions += dateCondition;
-  }
+  
   var query = customerSelectQuery + whereClause + orConditions;
   if (partnerLevel) {
 	query += " AND Program_Level__c = '" + partnerLevel + "'";
@@ -1479,12 +1424,7 @@ function initPartnerDiscountRule4(lines, conn, objQuote) {
 	orConditions = '  (' + orConditions + ')';
 
   }
-  if(dateCondition){
-	if(orConditions){
-		orConditions+=' AND ';
-	}
-	orConditions += dateCondition;
-  }
+  
 	//Creating Query
   var query = customerSelectQuery + whereClause + orConditions;
   if (partnerLevel) {
@@ -1628,13 +1568,6 @@ function initPartnerDiscountRule5(lines, conn, objQuote) {
 	orConditions = '  (' + orConditions + ')';
 
   }
-  if(dateCondition){
-	if(orConditions){
-		orConditions+=' AND ';
-	}
-	orConditions += dateCondition;
-  }
-  
   //Creating Query
   var query = customerSelectQuery + whereClause + orConditions;
   if (partnerServiceCapablity) {
@@ -1795,12 +1728,7 @@ function initPartnerDiscountRule6(lines, conn, objQuote) {
 	orConditions = '  (' + orConditions + ')';
 
   }
-  if(dateCondition){
-	if(orConditions){
-		orConditions+=' AND ';
-	}
-	orConditions += dateCondition;
-  }
+  
   var query = customerSelectQuery + whereClause + orConditions;
   
   console.log('Partner discount rule 6: Query' + query);
