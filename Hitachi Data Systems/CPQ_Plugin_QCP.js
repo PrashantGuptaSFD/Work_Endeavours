@@ -20,7 +20,7 @@ export function onBeforePriceRules(quote, lines, conn) {
 	console.log(query);
 	/*
 	 * conn.query() returns a Promise that resolves when the query completes.
-	 * refrence :: https://community.steelbrick.com/t5/Developer-Guidebook/JS-Quote-Calculator-Plugin-Template-amp-Samples/ta-p/5787
+	 * reference :: https://community.steelbrick.com/t5/Developer-Guidebook/JS-Quote-Calculator-Plugin-Template-amp-Samples/ta-p/5787
 	 */
 	 
 	return conn.query(query).then(function(results) {
@@ -85,13 +85,16 @@ function chainCustomerPartnerDiscountRules(lines,conn, objQuote, allLines){
 	if(isChainingDone == false){
 		if(objQuote.Renewal_Contract_Package__r.Do_Not_Apply_Customer_Partner_Discount__c == false ){
 			//Account Class Check on Quote, Direct =  Customer Discount, Indirect = Partner Discount
-			if(objQuote.Account_Class__c == "Direct"){
-				initCustomerDiscountRule1(allLines, conn, objQuote);
+			if(objQuote.Account_Class__c!=null){
+				if(objQuote.Account_Class__c.toUpperCase() == "DIRECT"){
+					initCustomerDiscountRule1(allLines, conn, objQuote);
+				}
+				else{
+					initPartnerDiscountRule1(allLines, conn, objQuote);
+				}
+				
+				isChainingDone = true;
 			}
-			else{
-				initPartnerDiscountRule1(allLines, conn, objQuote);
-			}
-			isChainingDone = true;
 		}
 	}
 }
