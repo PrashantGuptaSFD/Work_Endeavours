@@ -14,13 +14,18 @@ export function onBeforePriceRules(quote, lines, conn) {
   if (lines != null && lines.length > 0) {
 	
 	var quoteId = lines[0].record['SBQQ__Quote__c'];
+	console.log('quote id from lines:'+quoteId);
+	if(quoteId == null){
+		quoteId = quote.Id;
+		console.log('quote id from object:'+quoteId);
+	}
 	var objQuote;
 	//Query SBQQ__Quote__c
 	var query = "SELECT Id,Partner_Level__c,Price_Date__c,Renewal_Contract_Package__r.Do_Not_Apply_Customer_Partner_Discount__c , Partner_Service_Capability__c,Account_Class__c,Geo__c,Region__c, District__c, Install_At_Country__c,SBQQ__BillingCountry__c,Bill_To_Account__c,Bill_To_Account__r.SiteNumber__c,End_User_Category__c FROM SBQQ__Quote__c WHERE Id ='" + quoteId + "' LIMIT 1";
 	console.log(query);
 	/*
 	 * conn.query() returns a Promise that resolves when the query completes.
-	 * reference :: https://community.steelbrick.com/t5/Developer-Guidebook/JS-Quote-Calculator-Plugin-Template-amp-Samples/ta-p/5787
+	 * refrence :: https://community.steelbrick.com/t5/Developer-Guidebook/JS-Quote-Calculator-Plugin-Template-amp-Samples/ta-p/5787
 	 */
 	 
 	return conn.query(query).then(function(results) {
@@ -505,6 +510,7 @@ function initCustomerDiscountRule1(lines, conn, objQuote) {
   if (orConditions) {
 	query = query + whereClause + orConditions;
   }
+  query = query + ' LIMIT 50000';
   console.log('Customer discount rule 1:' + query);
   var mapCustomerDiscount1VSOE = {};
   
@@ -596,6 +602,7 @@ function initCustomerDiscountRule2(lines, conn, objQuote) {
   if (conditions) {
 	query = query + whereClause + conditions;
   }
+   query = query + ' LIMIT 50000';
   console.log('Customer discount rule 2:' + query);
 
   var mapCustomerDiscount2ProductPCode = {};
@@ -752,6 +759,7 @@ function initCustomerDiscountRule3(lines, conn, objQuote) {
 		query += " Install_At_Country__c = '" + installAtCountry + "'";  
 	  }
   }
+   query = query + ' LIMIT 50000';
   console.log('Customer discount rule 3:' + query);
 
   var mapCustomerDiscount3CountryProductLine = {};
@@ -1105,7 +1113,7 @@ function initPartnerDiscountRule1(lines, conn, objQuote) {
 	  else		
 		query += " WHERE End_User_Category__c = '" + endUserCategories + "'";
   }
-  
+   query = query + ' LIMIT 50000';
   console.log('Partner Discount rule 1 Query : ' + query);
   var mapCustomerDiscount1VSOE = {};
 	
@@ -1199,6 +1207,7 @@ function initPartnerDiscountRule2(lines, conn, objQuote) {
   if (conditions) {
 	query = query + whereClause + conditions;
   }
+   query = query + ' LIMIT 50000';
   console.log('Partner Discount rule 2: Query' + query);
 
   var mapCustomerDiscount2ProductPCode = {};
