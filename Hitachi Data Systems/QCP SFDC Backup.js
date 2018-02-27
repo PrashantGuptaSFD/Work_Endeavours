@@ -87,16 +87,20 @@ function getEffectiveSubscriptionTerm(quote, line) {
 }
 
 function chainCustomerPartnerDiscountRules(lines,conn, objQuote, allLines){
+	line.record["SBQQ_QCP_check__c"] = line.record["SBQQ_QCP_check__c"]+'test25';
 	console.log('==============Chain Customer Discount and Partner Discount Rules after RAF Rules ===========');
 	//Do_Not_Apply_Customer_Partner_Discount__c check on RCP
 	if(isChainingDone == false){
 		if(objQuote.Renewal_Contract_Package__r.Do_Not_Apply_Customer_Partner_Discount__c == false ){
 			//Account Class Check on Quote, Direct =  Customer Discount, Indirect = Partner Discount
+	line.record["SBQQ_QCP_check__c"] = line.record["SBQQ_QCP_check__c"]+'test24';
 			if(objQuote.Account_Class__c!=null){
 				if(objQuote.Account_Class__c.toUpperCase() == "DIRECT"){
+	line.record["SBQQ_QCP_check__c"] = line.record["SBQQ_QCP_check__c"]+'test23';
 					initCustomerDiscountRule1(allLines, conn, objQuote);
 				}
 				else{
+	line.record["SBQQ_QCP_check__c"] = line.record["SBQQ_QCP_check__c"]+'test22';
 					initPartnerDiscountRule1(allLines, conn, objQuote);
 				}
 				
@@ -206,6 +210,7 @@ function initRAFDiscountRule1(lines,conn, objQuote, allLines){
 		lines.forEach(function(line) {
 			
 			//Initialize RAF_Logs__c field on QLI with default String
+line.record["SBQQ_QCP_check__c"] = '1';
 			line.record['RAF_Logs__c'] = 'No RAF Discount Applied, No match found in Table';
 			line.record['RAF_Adjustment_Amount__c'] =  null;
 			line.record['RAF_Applied__c'] = false;
@@ -241,9 +246,11 @@ function initRAFDiscountRule1(lines,conn, objQuote, allLines){
 
 		//We will pass the remaining lines to the new set of rules 
 		if (remainingLines.length) {
+	line.record["SBQQ_QCP_check__c"] = line.record["SBQQ_QCP_check__c"]+'test27';
 			console.log('Inside remaining lines: RAF ');
 			initRAFDiscountRule2(remainingLines, conn, objQuote,allLines);
 		}else{
+	line.record["SBQQ_QCP_check__c"] = line.record["SBQQ_QCP_check__c"]+'test26';
 			chainCustomerPartnerDiscountRules(remainingLines, conn, objQuote,allLines);
 		}
 	});
@@ -360,9 +367,11 @@ function initRAFDiscountRule2(lines,conn, objQuote,allLines){
 
 		//We will pass the remaining lines to the new set of rules 
 		if (remainingLines.length) {
+	line.record["SBQQ_QCP_check__c"] = line.record["SBQQ_QCP_check__c"]+'test29';
 			console.log('Inside remaining lines: RAF ');
 			initRAFDiscountRule3(remainingLines, conn, objQuote, allLines);
 		}else{
+	line.record["SBQQ_QCP_check__c"] = line.record["SBQQ_QCP_check__c"]+'test28';
 			chainCustomerPartnerDiscountRules(remainingLines, conn, objQuote,allLines);
 		}
 	});
@@ -488,6 +497,7 @@ function initRAFDiscountRule3(lines,conn, objQuote,allLines){
 		if (remainingLines.length) {
 			console.log('remaining lines After all Rule processed: RAF ' + remainingLines.length);
 		}
+	line.record["SBQQ_QCP_check__c"] = line.record["SBQQ_QCP_check__c"]+'test30';
 		chainCustomerPartnerDiscountRules(remainingLines, conn, objQuote,allLines);
 	});
 }
@@ -574,6 +584,7 @@ function initCustomerDiscountRule1(lines, conn, objQuote) {
 		}
 
 		if (obj) {
+		line.record["SBQQ_QCP_check__c"] = 'test1';
 		  applyDiscountsOnLineItem(line, obj, 'Customer Rule 1',log);
 		}
 		else {
@@ -713,6 +724,7 @@ function initCustomerDiscountRule2(lines, conn, objQuote) {
 		}
 
 		if (obj) {
+		line.record["SBQQ_QCP_check__c"] =line.record["SBQQ_QCP_check__c"]+ 'test2';
 		  applyDiscountsOnLineItem(line, obj, 'Rule2',log);
 		}
 		else {
@@ -897,6 +909,7 @@ function initCustomerDiscountRule3(lines, conn, objQuote) {
 		}
 
 		if (obj) {
+		line.record["SBQQ_QCP_check__c"] =line.record["SBQQ_QCP_check__c"]+ 'test3';
 		  applyDiscountsOnLineItem(line, obj, 'Custome Rule 3', log);
 		}
 		else {
@@ -1034,6 +1047,7 @@ function initCustomerDiscountRule4(lines, conn, objQuote) {
 		}
 
 		if (obj) {
+		line.record["SBQQ_QCP_check__c"] = line.record["SBQQ_QCP_check__c"]+'test4';
 		  applyDiscountsOnLineItem(line, obj, 'Customer Rule 4',log);
 		}
 		else {
@@ -1117,6 +1131,7 @@ function initPartnerDiscountRule1(lines, conn, objQuote) {
   var vsoeDiscountCategories = [];
   var endUserCategories = objQuote.End_User_Category__c;
   var serviceSubtypes = [];
+	line.record["SBQQ_QCP_check__c"] = line.record["SBQQ_QCP_check__c"]+'test21';
   //Creating filter
   lines.forEach(function(line) {
 
@@ -1220,6 +1235,7 @@ function initPartnerDiscountRule1(lines, conn, objQuote) {
 		}
 
 		if (obj) {
+		line.record["SBQQ_QCP_check__c"] =line.record["SBQQ_QCP_check__c"]+ 'test5';
 		  applyDiscountsOnLineItem(line, obj, 'Partner Rule 1' ,log);
 		}
 		else {
@@ -1344,6 +1360,7 @@ function initPartnerDiscountRule2(lines, conn, objQuote) {
 		}
 
 		if (obj) {
+		line.record["SBQQ_QCP_check__c"] =line.record["SBQQ_QCP_check__c"]+ 'test6';
 		  applyDiscountsOnLineItem(line, obj, 'Partner Rule 2', log);
 		}
 		else {
@@ -1500,6 +1517,7 @@ function initPartnerDiscountRule3(lines, conn, objQuote) {
 		//}
 
 		if (obj) {
+		line.record["SBQQ_QCP_check__c"] = line.record["SBQQ_QCP_check__c"]+'test7';
 		  applyDiscountsOnLineItem(line, obj, 'Partner Rule 3',log);
 		}
 		else {
@@ -1532,7 +1550,8 @@ function initPartnerDiscountRule4(lines, conn, objQuote) {
   var quoteGeo = objQuote.Geo__c;
   var quoteRegion = objQuote.Region__c;
   var quoteDistrict = objQuote.District__c;
-  
+
+  line.record["SBQQ_QCP_check__c"] = line.record["SBQQ_QCP_check__c"]+'Test20';
   //Creating Filter Sets
   lines.forEach(function(line) {
 	var productF = line.record['Pricing_Product_Family__c'];
@@ -1634,13 +1653,17 @@ function initPartnerDiscountRule4(lines, conn, objQuote) {
 		
 		var obj;
 		var log = '';
-		
+		console.log('testingifcon'+allInstallAtCountryKey);
+
 		if (installAtCountryKey in mapCustomerDiscount3InstalllAtCountry) {
 		  obj = mapCustomerDiscount3InstalllAtCountry[installAtCountryKey];
 		  log = 'Partner Rules Chunk 4 Rule 1 Applied [ Install_At_Country__c = ' + installAtCountry + ' Product Family = '+line.record['Pricing_Product_Family__c']+ ' Product Type = '+ line.record['Product_Type__c'] + ' Partner Level = ' +partnerLevel+' ]';
+console.log('objtesting1val'+obj);
 		}else if (allInstallAtCountryKey in mapCustomerDiscount3InstalllAtCountry) {
 		  obj = mapCustomerDiscount3InstalllAtCountry[allInstallAtCountryKey];
 		  log = 'Partner Rules Chunk 4 Rule 1 Applied [ Install_At_Country__c = ' + WILDCARD_All + ' Product Family = '+line.record['Pricing_Product_Family__c']+ ' Product Type = '+ line.record['Product_Type__c'] + ' Partner Level = ' +partnerLevel+' ]';
+//line.record["SBQQ_QCP_check__c"]= line.record["SBQQ_QCP_check__c"]+mapCustomerDiscount3InstalllAtCountry[allInstallAtCountryKey];
+console.log('objtestingval'+obj);
 		}else if (regionKey in mapCustomerDiscount3Region) {
 		  obj = mapCustomerDiscount3Region[regionKey];
 		  log = 'Partner Rules Chunk 4 Rule 2 Applied [ Region = ' + quoteRegion + ' Product Family = '+line.record['Pricing_Product_Family__c']+ ' Product Type = '+ line.record['Product_Type__c'] + ' Partner Level = ' +partnerLevel+' ]';
@@ -1812,6 +1835,7 @@ function initPartnerDiscountRule5(lines, conn, objQuote) {
 		//}
 
 		if (obj) {
+		line.record["SBQQ_QCP_check__c"] = line.record["SBQQ_QCP_check__c"]+'test9';
 		  applyDiscountsOnLineItem(line, obj, 'Partner Rule 5', log);
 		}
 		else {
@@ -1982,6 +2006,7 @@ function initPartnerDiscountRule6(lines, conn, objQuote) {
 		//}
 
 		if (obj) {
+		line.record["SBQQ_QCP_check__c"] = line.record["SBQQ_QCP_check__c"]+'test10';
 		  applyDiscountsOnLineItem(line, obj, 'Partner Rule 6',log);
 		}
 		else {

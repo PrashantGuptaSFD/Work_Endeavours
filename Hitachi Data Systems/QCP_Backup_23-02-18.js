@@ -42,8 +42,6 @@ export function onBeforePriceRules(quote, lines, conn) {
 	  });
 
 
-  }else{
-	  return Promise.resolve();
   }
 
 };

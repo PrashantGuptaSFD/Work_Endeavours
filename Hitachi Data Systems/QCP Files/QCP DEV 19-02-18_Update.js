@@ -2,7 +2,25 @@
 var isChainingDone = false;
 const WILDCARD_All = 'ALL';
 
+
 var dateCondition = '';
+
+function reInitializelines(lines, conn, objQuote){
+	lines.forEach(function(line) {
+		//RAF discount Initialization
+		line.record['RAF_Logs__c'] = 'No RAF Discount Applied, No match found in Table';
+		line.record['RAF_Adjustment_Amount__c'] =  null;
+		line.record['RAF_Applied__c'] = false;
+		line.record['RAF_Adjustment_Type__c'] = null;
+		//Partner Discount Initialization 
+		line.record['Customer_Partner_Logs__c'] = 'No Partner/Customer Discount Applied';
+		line.record['Partner_Discount_Adjustment_Amount__c'] =  null;
+		line.record['Partner_Discount_Applied__c'] = false;
+		line.record['Partner_Discount_Adjustment_Type__c'] = null;
+	});
+	//Calling RAF Discount Function
+	initRAFDiscountRule1(lines, conn, objQuote,lines);
+}
 
 export function onBeforePriceRules(quote, lines, conn) {
 	var allLines = lines;
@@ -31,8 +49,8 @@ export function onBeforePriceRules(quote, lines, conn) {
 		  if(objQuote.Price_Date__c!=null){
 			dateCondition = '(	Date_From__c <=  ' + objQuote.Price_Date__c + ' AND Date_To__c >='+ objQuote.Price_Date__c +' )'
 		  }
-		  //Calling RAF Discount Function
-		  initRAFDiscountRule1(lines, conn, objQuote,lines);
+		  //Calling reInitialize	 Discount Function
+		  reInitializelines(lines, conn, objQuote,lines);
 		  
 		}
 	  });
@@ -802,9 +820,8 @@ function initCustomerDiscountRule3(lines, conn, objQuote) {
 	//Iterating over all the results that was queried for CustomerDiscount lookup and creating map
   conn.query(query)
 	.then(function(results) {
-	  if (results.totalSize) {
-		  
 		logResultSize(results,query,'Customer discount rule 3');
+	  if (results.totalSize) {		  
 		results.records.forEach(function(record) {
 		  
 		  var objValue = createObjectValue(record);
@@ -1734,7 +1751,7 @@ function initPartnerDiscountRule5(lines, conn, objQuote) {
   if (partnerServiceCapablity) {
 	query += " AND Partner_Service_Capability__c = '" + partnerServiceCapablity + "'";
   }
-  console.log('Partner discount rule 3:' + query);
+  console.log('Partner discount rule 5:' + query);
 
   var mapCustomerDiscount5Country = {};
   var mapCustomerDiscount5Distict = {};
